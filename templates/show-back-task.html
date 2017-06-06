@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load formtags %}
+{% block header_css %}	
+	<style>
+		div .add-task {
+			margin-top:-30px;
+			margin-bottom:20px;
+		}
+		table .cancel {
+			margin-left:5px;
+		}
+		#front,#back {
+			margin-top:10px;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+    <div id="wrapper">
+        <div id="page-wrapper">
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="page-header">
+                           <a href="{% url 'index' %}"><i class="fa fa-home"></i> 首页</a> > 任务管理 > 任务创建 > <a href="{% url 'task:create_back_task' %}">后端任务</a> > 查看详情
+                        </h4>
+                    </div>
+                </div>
+                <!-- /. ROW  -->
+		<div class="row">
+                    <div class="col-md-offset-3 col-md-6 col-sm-12 col-md-offset-3">
+                        <div class="panel panel-info">
+				<div class="panel-heading">
+					后端任务详情
+				</div>
+                            	<div class="panel-body">
+                                   <div class="tab-content">
+					<div class="tab-pane fade active in">
+						<table class="table table-striped table-bordered table-hover">
+							<tbody>
+								<tr><td>任务编号: <strong>{{back_task.id}}</strong></td></tr>
+								<tr><td>任务名称：<strong>{{back_task.task_name}}</strong></td></tr>
+								<tr><td>项目名称：<strong>{{back_task.back_project.project_name}}</strong></td></tr>
+								<tr><td>项目组：<strong>{{back_task.back_group.project_group}}</strong></td></tr>
+								<tr><td>任务构建号：<strong>{{back_task.project_version}}</strong></td></tr>
+								<tr><td>任务版本号：<strong>{{back_task.project_md5}}</strong></td></tr>
+								<tr><td>完成状态：<strong>{{back_task.complete_status}}</strong></td></tr>
+								<tr><td>审核状态：<strong>{{back_task.review_status}}</strong></td></tr>
+								<tr><td>创建人：<strong>{{back_task.creater}}</strong></td></tr>
+								<tr><td>操作人：<strong>{{back_task.operator}}</strong></td></tr>
+								<tr><td>抄送人：<strong>{{back_task.cc | default:"无"}}</strong></td></tr>
+								<tr><td>审核人：<strong>{{back_task.reviewer | default:"无"}}</strong></td></tr>
+								<tr><td>附件：<strong>{% if back_task.attachment %} {% split_str back_task.attachment.name %} <a href="{% url 'task:download' back_task.id %}">下载</a> {% else %} 无附件 {% endif %}</strong></td></tr>
+								<tr><td>创建时间：<strong>{{back_task.create_time}}</strong></td></tr>
+								<tr><td>任务备注：<strong>{{back_task.description | default:"无"}}</strong></td></tr>
+							</tbody>
+						</table>
+					</div>
+                                   </div>
+                   	    </div>
+		      </div>
+	       </div>
+	</div>
+                <!-- /. ROW  -->
+        </div>
+            <!-- /. PAGE INNER  -->
+   </div>
+        <!-- /. PAGE WRAPPER  -->
+{% endblock %}
+{% block bottom_js %}
+	<script>
+		var url=window.location.href;
+                if (url.indexOf('?message')>0){
+                        len=url.length;
+                        position=url.indexOf('?message');
+                        data=url.substring(position+9,len+1);
+                        alert(decodeURIComponent(data));
+                        url=url.substring(0,position);
+                        window.location.href=url;
+                }
+	//	if(url.indexOf('?type')>0){
+	//		len=url.length;
+	//		start=url.indexOf('?');
+	//		end=url.indexOf('&');
+	//		sub_part=url.substring(start+1,end+1);
+	//		//alert(sub_part);
+	//		url=url.replace(sub_part,"");
+	//		window.location.href=url;
+	//		
+	//	}
+	//	if ("{{type}}" == 'back'){
+	//		$('#show_front').removeClass('active');
+	//		$('#show_back').addClass('active');
+	//	} else if("{{type}}" == 'front') {
+	//		$('#show_back').removeClass('active');
+	//		$('#show_front').addClass('active');
+	//	}
+		
+	</script>
+{% endblock %}

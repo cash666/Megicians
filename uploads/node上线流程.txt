@@ -1,0 +1,43 @@
+FE和NODE到上线流程（以ares_node和ares_FE为例）：
+1，首先先找一台空闲的机器（如172.16.3.56），修改主机名
+2，到ansible机器上配置hosts文件，以便ansible发布版本能找到该主机名
+如：[ares_node]
+    172.16.3.56
+3，在ansible机器的/etc/hosts里面添加主机名，如172.16.3.56     ares_node
+4，cd到ansible机器的/etc/ansible/roles，执行update_hostname.sh，将该hosts文件推到全部线上服务器
+5，在新的机器里面初始化环境，安装node.js,安装脚本见gitlab/doc/Node/nodejs-install.txt文档
+6，如FE走的是cdn，则不需要修改ansible机器里面的前端发布脚本(/root/wangwei/fabu.py)，只需要执行python managedata.py cdn Ares_Node，然后发布即可
+7，发布完成后登录到activity_template到/usr/local/nginx/html/cdn/ares_fe目录下，从其他的静态资源目录下拷贝一份config.js到该目录下
+8，登录到ares_node机器上检查node是否已经启动(如果没启动，则检查/usr/local/html/ares_node/start.sh是否有执行的权限)
+7,在dmz上配置域名转发，直接指到node启动的9015端口，如
+	vhost/ares.prod.wkzf.conf 
+
+server
+	{
+		listen 80;
+		server_name ares.prod.wkzf;
+		location / {
+			proxy_redirect off;
+			proxy_set_header Host $host;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_pass http://172.16.3.56:9015;
+		}
+		access_log /usr/local/nginx/log/ares.prod.wkzf_Http.log;
+	}
+	server {
+			listen       443;
+			server_name ares.prod.wkzf;
+			ssl on;
+			ssl_certificate /usr/local/nginx/ssl/prod.wkzf.crt;
+			ssl_certificate_key /usr/local/nginx/ssl/prod.wkzf.key;
+			location / {
+			proxy_redirect off;
+			proxy_set_header Host $host;
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_set_header request_uri $request_uri;
+			proxy_pass https://172.16.3.56:9015;
+	}
+access_log /usr/local/nginx/log/ares.prod.wkzf_Https.log;
+}

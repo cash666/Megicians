@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block header_css %}	
+	<style>
+		div .add-task {
+			margin-top:-30px;
+			margin-bottom:20px;
+		}
+		table .cancel {
+			margin-left:5px;
+		}
+		#front,#back {
+			margin-top:10px;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+    <div id="page-wrapper" xmlns="http://www.w3.org/1999/html">
+        <div id="page-inner">
+            <div class="row">
+                <div class="col-md-12">
+                    <h4 class="page-header">
+                        <a href="{% url 'index' %}"><i class="fa fa-home"></i> 首页</a> > 用户管理 > 用户列表管理
+                    </h4>
+                </div>
+            </div>
+	    <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12 add-task">
+                  <a href="{% url 'users:adduser' %}" class="btn btn-primary">添加用户</a>
+	    	</div>
+	    </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">用户列表</div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>编号</th>
+                                            <th>用户名</th>
+                                            <th>昵称</th>
+                                            <th>用户邮件</th>
+                                            <th>用户组</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for user in userlist %}
+                                            <tr>
+                                                <td>{{ forloop.counter }}</td>
+                                                <td>{{ user.username }}</td>
+                                                <td>{{ user.nick_name }}</td>
+                                                <td>{{ user.email }}</td>
+                                                <td>
+                                                    {% for group in user.groups.all  %}
+                                                        {{ group.name }}&#12288;
+                                                    {% endfor %}
+                                                </td>
+                                                <td>
+                                                    <button type="button" class="btn btn-primary" data='{{ user.username }}' id="user_modify">修改密码</button>
+                                                    {% if user.is_active %}
+                                                        <button type="button" class="btn btn-warning" status="true" data="{{ user.username }}" id="user_active">禁用</button>
+                                                    {% else %}
+                                                        <button type="button" class="btn btn-warning" status="false" data="{{ user.username }}" id="user_active">开启</button>
+                                                    {% endif %}
+                                                    <button type="button" class="btn btn-danger" data='{"uid":"{{ user.id }}","username":"{{ user.username }}"}' id="user_to_group">添加用户组</button>
+                                                    <button type="button" class="btn btn-danger" data="{{ user.username }}" id="user_delete">删除</button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div class="text-center">
+                                    <div class="panel-default">
+                                            <ul class="pagination">
+                                                <li><a href="{{ request.path }}?page=1">«</a></li>
+                                                {% if page_obj.has_previous %}
+                                                    <li><a href="{{ request.path }}?&page=
+                                                            {{ page_obj.previous_page_number }}">上一页</a></li>
+                                                {% else %}
+                                                    <li class="previous disabled"><a>上一页</a></li>
+                                                {% endif %}
+                                                {% for i in page_obj.paginator.page_range %}
+                                                    <li {% if page_obj.number == i %}class="active"{% endif %}><a
+                                                            href="{{ request.path }}?page={{ i }}">{{ i }}</a></li>
+                                                {% endfor %}
+                                                {% if page_obj.has_next %}
+                                                    <li><a href="{{ request.path }}?page=
+                                                            {{ page_obj.next_page_number }}">下一页</a></li>
+                                                {% else %}
+                                                    <li class="previous disabled"><a>下一页</a></li>
+                                                {% endif %}
+                                                <li>
+                                                    <a href="{{ request.path }}?page={{ page_obj.paginator.num_pages }}">»</a>
+                                                </li>
+                                            </ul>
+                                    </div>
+                                </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="user_to_group_modal" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">x</button>
+                    <h4 id="user_to_group_modal_title">用户添加到指定组</h4>
+                </div>
+                <div class="modal-body form-inline">
+                    <select class="form-control" id="all_user_group"></select>
+                    <button class="btn btn-primary" id="user_to_group_btn">提交</button>
+                </div>
+                <div class="modal-footer">
+                    <input class="btn btn-default" data-dismiss="modal" aria-hidden="true" type="button" value="取消">
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block bottom_js %}
+    <script>
+        $("[id=user_active]").click(function () {
+            var click_obj = $(this);
+            var data = click_obj.attr('data');
+            var status = click_obj.attr("status");
+            if (status == "true") {
+                click_obj.removeClass("btn-warning").addClass("btn-info").attr("status", "false").text("开启");
+            } else {
+                click_obj.removeClass("btn-info").addClass("btn-warning").attr("status", "true").text("禁用");
+            }
+            $.post("{% url 'users:modifyuserstatus' %}", {"username": data,'csrfmiddlewaretoken':'{{ csrf_token }}'}, function (res) {
+                if (res.status != 0) {
+                    swal({
+                        title: res.errmsg,
+                        type: "error",
+                        confirmButtonText: "知道了"
+                    });
+                }
+            })
+        });
+        $("[id=user_delete]").click(function(){
+            var click_obj = $(this);
+            var data = click_obj.attr('data');
+            $.post("{% url 'users:deleteuser' %}",{"username": data,'csrfmiddlewaretoken':'{{ csrf_token }}'}, function (res) {
+                if ( res.status == 0 ){
+                    swal({
+                        "title": "删除成功",
+                        "text": "",
+                        "type": "success"
+                    }, function () {
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 50);
+                    })
+                }else {
+                    swal("操作失败", res.errmsg, "error")
+                }
+            })
+        });
+    $("[id=user_to_group]").click(function () {
+        var user_to_group_modal = $("#user_to_group_modal");
+        var all_user_group = $("#all_user_group");
+        var click_obj = $(this);
+        data=JSON.parse($(this).attr('data'));
+        user_to_group_modal.modal("show");
+        $("#user_to_group_modal_title").html(data.username+"添加到指定用户组");
+        $.get("{% url 'users:group' %}",{"uid":data.uid,'csrfmiddlewaretoken':'{{ csrf_token }}'}, function (res) {
+                html = '<option value="0">请选择用户组</option>';
+                $.each(res,function (n, obj) {
+                    html += '<option value="'+obj.pk+'">'+obj.fields.name+'</option>'
+                });
+                all_user_group.html(html);
+            });
+            return false;
+    });
+    $("#user_to_group_btn").click(function () {
+            var url = "{% url 'users:group' %}";
+            var gid = $("#all_user_group").val();
+            $("#user_to_group_modal").modal("hide");
+            $.post(url, {"uid": data.uid, "gid": gid,'csrfmiddlewaretoken':'{{ csrf_token }}'}, function (res) {
+                if (res.status == 0) {
+                    swal({
+                        "title": "添加成功",
+                        "text": "",
+                        "type": "success"
+                    }, function () {
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 50);
+                    })
+                } else {
+                    swal("操作失败", res.errmsg, "error");
+                }
+            })
+        })
+    </script>
+{% endblock %}

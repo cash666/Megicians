@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% load formtags %}
+{% block header_css %}	
+	<style>
+		div .add-task {
+			margin-top:-30px;
+			margin-bottom:20px;
+		}
+		table .cancel {
+			margin-left:5px;
+		}
+		#front,#back {
+			margin-top:10px;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+    <div id="wrapper">
+        <div id="page-wrapper">
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="page-header">
+                           <a href="{% url 'index' %}"><i class="fa fa-home"></i> 首页</a> > 任务管理 > 任务创建 > <a href="{% url 'task:create_back_task' %}">后端任务</a> > 任务修改
+                        </h4>
+                    </div>
+                </div>
+                <!-- /. ROW  -->
+		<div class="row">
+                    <div class="col-md-offset-3 col-md-6 col-sm-12 col-md-offset-3">
+                        <div class="panel panel-info">
+				<div class="panel-heading">
+					后端任务修改
+				</div>
+                            	<div class="panel-body">
+                                   <div class="tab-content">
+					<div class="tab-pane fade active in">
+						<table class="table table-striped table-bordered table-hover">
+							<tbody>
+								<form method='post' action="{% url 'task:modify_back_task' back_task.id %}" id='form1' enctype="multipart/form-data">{% csrf_token %}
+									<tr><td><span style='color:red'>*</span>任务名称 {{back_task_form.task_name}}</td></tr>
+									<tr><td><span style='color:red'>*</span>项目名称 {{back_task_form.back_project}}</td></tr>
+									<tr><td><span style='color:red'>*</span>项目组 {{back_task_form.back_group}}</td></tr>
+									<tr><td><span style='color:red'>*</span>任务构建号 {{back_task_form.project_version}}</td></tr>
+									<tr><td><span style='color:red'>*</span>任务版本号 {{back_task_form.project_md5}}</td></tr>
+									<tr><td>操作人 {{back_task_form.operator}}</td></tr>
+									<tr><td>附件 {{back_task_form.attachment}}  {% if back_task.attachment %}{% split_str back_task.attachment.name %} <a href="{% url 'task:download' task_id %}">下载</a>{% endif %} </td></tr>
+									<tr><td>任务备注 {{back_task_form.description}}</td></tr>
+									<tr><td><input onclick='return check_input(this)' class='btn btn-success btn-sm' style='margin-left:230px' type='submit' value='保存' /><input style='margin-left:13px' class='btn btn-danger btn-sm' type='reset' value='重置' /></td></tr>
+								</form>
+							</tbody>
+						</table>
+					</div>
+                                   </div>
+                   	    </div>
+		      </div>
+	       </div>
+	</div>
+                <!-- /. ROW  -->
+        </div>
+            <!-- /. PAGE INNER  -->
+   </div>
+        <!-- /. PAGE WRAPPER  -->
+{% endblock %}
+{% block bottom_js %}
+	<script>
+		var url=window.location.href;
+                if (url.indexOf('?message')>0){
+                        len=url.length;
+                        position=url.indexOf('?message');
+                        data=url.substring(position+9,len+1);
+                        alert(decodeURIComponent(data));
+                        url=url.substring(0,position);
+                        window.location.href=url;
+                }
+		$('#id_task_name').val("{{back_task.task_name}}");
+		$('#id_back_project').find('option').each(function(){
+                        if($(this).val()=="{{back_task.back_project_id}}"){
+                                $(this).attr('selected','selected');
+                        }
+                })
+		$('#id_back_group').find('option').each(function(){
+                        if($(this).val()=="{{back_task.back_group_id}}"){
+                                $(this).attr('selected','selected');
+                        }
+                })
+		$('#id_project_version').val("{{back_task.project_version}}");
+		$('#id_project_md5').val("{{back_task.project_md5}}");
+		$('#id_operator').find('option').each(function(){
+                        if($(this).text()=="{{back_task.operator}}"){
+                                $(this).attr('selected','selected');
+                        }
+                })
+		$('#id_description').val("{{back_task.description}}");
+		function check_input(obj){
+                        var ret=true;
+                        var task_name=$(obj).parent().parent().parent().find('input').eq(1).val();
+                        var project_version=$(obj).parent().parent().parent().find('input').eq(2).val();
+                        var project_md5=$(obj).parent().parent().parent().find('input').eq(3).val();
+                        if($.trim(task_name).length == '' || $.trim(project_version).length == '' || $.trim(project_md5).length == ''){
+                                alert('亲，标红色星号的内容不能为空哦！');
+                                ret=false;
+                        }
+                        return ret;
+                }
+	</script>
+{% endblock %}

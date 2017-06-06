@@ -1,0 +1,62 @@
+﻿{% extends "base.html" %}
+{% block header_css %}
+{% endblock %}
+{% block content %}
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper">
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="page-header">
+                           <a href="{% url 'index' %}"><i class="fa fa-home"></i> 首页</a> > <a href="{% url 'task:front_list' %}">项目配置</a> > <a href="{% url 'task:back_list' %}">后端项目配置</a> > 后端项目组修改
+                        </h4>
+                    </div>
+                </div>
+                <!-- /. ROW  -->
+
+                <div class="row">
+                    <div class="col-md-offset-3 col-md-6 col-sm-12 col-xs-12 col-md-offset-3">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                后端项目组修改
+                            </div>
+                            <div class="panel-body">
+				<div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <tbody>
+					    <form id='form1' method='post' action="{% url 'task:modify_back_group' group_obj.id %}">{% csrf_token %}
+                                              <tr>
+                                                <td>项目名称 {{back_group_form.back_project}}</td>
+                                              </tr>
+					      <tr>
+					        <td>项目组 {{back_group_form.project_group}}</td>
+					      </tr>
+                                              <tr>
+						<td>项目主机 {{back_group_form.hosts}}</td>
+					      </tr>
+					      <tr>
+						<td><input style='margin-left:230px' type='submit' value='提交' class="btn btn-primary" /><input style='margin-left:10px' type='reset' value='重置' class="btn btn-primary" /></td>
+					      </tr>
+					    </form>                        
+                                        </tbody>
+                                    </table>
+                               </div>
+                          </div>
+                      </div>
+                </div>
+            </div>
+            <!-- /. PAGE INNER  -->
+        </div>
+        <!-- /. PAGE WRAPPER  -->
+{% endblock %}
+{% block bottom_js %}
+	<script>
+		$('#id_project_group').val("{{group_obj.project_group}}");
+		$('#id_hosts').val("{{group_obj.hosts}}");
+		$('#id_back_project').find('option').each(function(){
+			if($(this).val()=="{{group_obj.back_project_id}}"){
+                        	$(this).attr('selected','selected');
+                        }
+		})
+	</script>
+{% endblock %}

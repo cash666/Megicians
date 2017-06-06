@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="page-wrapper" xmlns="http://www.w3.org/1999/html">
+        <div id="page-inner">
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">跳转页面</div>
+                        <div class="panel-body">
+                            {% if status == 0 %}
+                                <h1>
+                                    <center>操作成功</center>
+                                </h1>
+                            {% else %}
+                                <h1>
+                                    <center>操作失败</center>
+                                </h1><br>
+                                <h1>
+                                    <center>{{ errmsg }}</center>
+                                </h1>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block bottom_js %}
+<script>
+    var status = {{ status }};
+    var next_url = "{{ next_url }}";
+    var timejump = 1500;
+        if (status != 0) {
+            timejump = 5000
+        }
+        setTimeout(function () {
+            window.location.href = next_url;
+        }, timejump)
+</script>
+{% endblock %}

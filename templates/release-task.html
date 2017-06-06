@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block header_css %}
+	<link rel="stylesheet" type="text/css" href="{% static 'css/ladda-themeless.css' %}" />
+    	<link rel="stylesheet" type="text/css" href="{% static 'css/gbtags.css' %}" />
+	<style>
+		#show_result {
+			display:none;
+		}	
+		.panel-heading,#result h2 {
+			text-align:center;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+        <!-- /. NAV SIDE  -->
+        <div id="page-wrapper">
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="page-header">
+                           <a href="{% url 'index' %}"><i class="fa fa-home"></i> 首页</a> > 项目发布
+                        </h4>
+                    </div>
+                </div>
+                <!-- /. ROW  -->
+
+                    <div class="col-md-6 col-sm-12 col-xs-12">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                前端发布列表
+                            </div> 
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover">
+					{% for front_task in front_task_list %}
+                                        <tbody>
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+                                                <td><button class='btn btn-primary ladda-button' data-style="expand-left" onclick="release_front_task(this,{{front_task.id}})"><span class="ladda-label">{{front_task.task_name}}</span></button></td>
+                                            </tr>                                 
+                                        </tbody>
+					{% empty %}
+					暂无前端发布任务
+					{% endfor %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+		    <div class="col-md-6 col-sm-12 col-xs-12">
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                后端发布列表
+                            </div> 
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover">
+					{% for back_task in back_task_list %}
+                                        <tbody>
+                                            <tr>
+                                                <td>{{forloop.counter}}</td>
+						<td><button class='btn btn-primary ladda-button' data-style="expand-left" onclick="release_back_task(this,{{back_task.id}})"><span class="ladda-label">{{back_task.task_name}}</span></button></td>
+                                            </tr>                                 
+                                        </tbody>
+					{% empty %}
+                                        暂无后端发布任务
+					{% endfor %}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+		    <div class="row">
+                    	<div class="col-md-offset-3 col-md-6 col-sm-12 col-xs-12 col-md-offset-3">
+                        	<div class="panel panel-success" id='show_result'>
+                            		<div class="panel-heading">
+                                		发布结果
+                            		</div>
+                            		<div class="panel-body" id='result'></div>
+				</div>
+                        </div>
+                    </div>
+                <!-- /. ROW  -->
+            </div>
+            <!-- /. PAGE INNER  -->
+        </div>
+        <!-- /. PAGE WRAPPER  -->
+{% endblock %}
+{% block bottom_js %}
+	<script src="{% static 'js/jquery.jribbble.min.js' %}"></script>
+	<script src="{% static 'js/spin.js' %}"></script>
+	<script src="{% static 'js/ladda.js' %}"></script>	
+	<script>
+		function release_back_task(obj,id){
+			var text=$(obj).find('span').eq(0).text();
+			if (text == '发布完成'){
+				alert('亲，此任务已发布完成了！');
+				return false;
+			}
+			var l=Ladda.create(obj);
+			l.start();
+			$(obj).find('span').eq(0).text('发布中....');
+			$.ajax({
+				type:'post',
+				url:"{% url 'release:release_task' %}",
+				data:{'id':id,'type':'back','csrfmiddlewaretoken':'{{ csrf_token }}'},
+				success:function(data){
+					if(data){
+						data=$.parseJSON(data);
+						l.stop();
+						if(data['status']=='ok'){
+							$(obj).find('span').eq(0).text('发布完成');
+							$('#show_result').css('display','block');
+							$('#result').html(data['content']);
+						} else {
+							$(obj).find('span').eq(0).text('发布失败');
+							$('#show_result').css('display','block');
+                                                        $('#result').html(data['content']);
+						}
+					}
+				},
+			})
+		}
+		function release_front_task(obj,id){
+                        var text=$(obj).find('span').eq(0).text();
+			if (text == '发布完成'){
+                                alert('亲，此任务已发布完成了！');
+                                return false;
+                        }
+                        var l=Ladda.create(obj);
+                        l.start();
+                        $(obj).find('span').eq(0).text('发布中....');
+                        $.ajax({
+                                type:'post',
+                                url:"{% url 'release:release_task' %}",
+                                data:{'id':id,'type':'front','csrfmiddlewaretoken':'{{ csrf_token }}'},
+                                success:function(data){
+                                        if(data){
+                                                data=$.parseJSON(data);
+                                                l.stop();
+                                                if(data['status']=='ok'){
+                                                        $(obj).find('span').eq(0).text('发布完成');
+                                                        $('#show_result').css('display','block');
+                                                        $('#result').html(data['content']);
+                                                } else {
+                                                        $(obj).find('span').eq(0).text('发布失败');
+                                                        $('#show_result').css('display','block');
+                                                        $('#result').html(data['content']);
+                                                }
+                                        }
+                                },
+                        })
+                }	
+	</script>
+{% endblock %}

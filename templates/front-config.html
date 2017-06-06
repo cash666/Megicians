@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+{% load formtags %}
+{% block header_css %}
+	<style>
+		div .add-front {
+			margin-top:-30px;
+			margin-bottom:20px;
+		}
+		div .add-front .f1,div .add-front .f2 {
+			margin-left:5px;
+		}
+		table .cancel {
+			margin-left:15px;
+		}
+	</style>
+{% endblock %}
+{% block content %}
+        <div id="page-wrapper">
+            <div id="page-inner">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="page-header">
+                           <a href="{% url 'index' %}"><i class="fa fa-home"></i> 首页</a> > 项目配置 > 前端项目配置
+                        </h4>
+                    </div>
+                </div>
+                <!-- /. ROW  -->
+
+		<div class="add-front">
+		    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">添加项目类型</button>
+		      <div class="modal fade" id='myModal' tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  			<div class="modal-dialog modal-sm" role="document">
+    			  <div class="modal-content">
+      			    <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                              <h4 class="modal-title">添加项目类型</h4>
+                            </div>
+      		            <form method='post' action="{% url 'task:add_front_type' %}" id='form1'>{% csrf_token %}
+                              <div class="modal-body">
+                                <table>
+                                  <tr><td><span style='color:red'>*</span>项目类型 {{front_type_form.project_type}}</td><tr>
+                                </table>
+		              </div>
+      		              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <input type="submit" onclick="return check_input(this)" class="btn btn-primary" value='保存'>
+                              </div>
+			    </form>
+                         </div>
+                       </div>
+                     </div>
+		     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal2">删除项目类型</button>
+                      <div class="modal fade" id='myModal2' tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog modal-sm" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                              <h4 class="modal-title">删除项目类型</h4>
+                            </div>
+                            <form method='post' action="{% url 'task:delete_front_type' %}" id='form3'>{% csrf_token %}
+                              <div class="modal-body">
+                                <table>
+                                  <tr><td><span style='color:red'>*</span>请选择要删除的项目类型 {{front_project_form.front_type}}</td><tr>
+                                </table>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <input type="submit" onclick="return check_select(this)" class="btn btn-primary" value='删除'>
+                              </div>
+                            </form>
+                         </div>
+                       </div>
+                     </div>
+		     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal3">添加项目主机</button>
+                      <div class="modal fade" id='myModal3' tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog modal-sm" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                              <h4 class="modal-title">添加项目主机</h4>
+                            </div>
+                            <form method='post' action="{% url 'task:add_front_host' %}" id='form2'>{% csrf_token %}
+                              <div class="modal-body">
+                                <table>
+                                  <tr><td><span style='color:red'>*</span>项目主机 {{front_host_form.project_host}}</td><tr>
+                                </table>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <input type="submit" onclick="return check_input(this)" class="btn btn-primary" value='保存'>
+                              </div>
+                            </form>
+                         </div>
+                       </div>
+                     </div>
+		     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal4">删除项目主机</button>
+                      <div class="modal fade" id='myModal4' tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog modal-sm" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                              <h4 class="modal-title">删除项目主机</h4>
+                            </div>
+                            <form method='post' action="{% url 'task:delete_front_host' %}" id='form4'>{% csrf_token %}
+                              <div class="modal-body">
+                                <table>
+                                  <tr><td><span style='color:red'>*</span>请选择要删除的项目主机 {{front_project_form.front_host}}</td><tr>
+                                </table>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <input type="submit" onclick="return check_select(this)" class="btn btn-primary" value='删除'>
+                              </div>
+                            </form>
+                         </div>
+                       </div>
+                     </div>
+		     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal5">添加项目名称</button>
+                      <div class="modal fade" id='myModal5' tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                        <div class="modal-dialog modal-sm" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                              <h4 class="modal-title">添加项目名称</h4>
+                            </div>
+                            <form method='post' action="{% url 'task:front_list' %}" id='form3'>{% csrf_token %}
+                              <div class="modal-body">
+                                <table>
+                                  <tr><td><span style='color:red'>*</span>项目名称 {{front_project_form.project_name}}</td><tr>
+                                  <tr><td><span style='color:red'>*</span>项目类型 {{front_project_form.front_type}}</td><tr>
+                                  <tr><td><span style='color:red'>*</span>项目主机 {{front_project_form.front_host}}</td><tr>
+                                </table>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                <input type="submit" onclick="return check_input3(this)" class="btn btn-primary" value='保存'>
+                              </div>
+                            </form>
+                         </div>
+                       </div>
+                     </div>
+		</div>				
+                <!-- /. ROW  -->
+		<div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                前端项目配置列表
+				<form method='post' action="{% url 'task:front_list' %}" class='pull-right'>{% csrf_token %}
+					<input type='text' name='front_search' />&nbsp;<input type='submit' onclick="return check_input2(this)" class="btn btn-info btn-sm" value='搜索' />
+				</form>
+                            </div> 
+                            <div class="panel-body">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-bordered table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>编号</th>
+                                                <th>项目名称</th>
+                                                <th>项目类型</th>
+                                                <th>项目主机</th>
+						<th>创建人</th>
+						<th><a href="?sort=time">创建日期</a></th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+				        {% page_start page as count %}
+					  {% for front_project in all_front_project.object_list %}
+					    {% add count as count %}
+                                            <tr>
+                                                <td>{{count}}</td>
+                                                <td>{{front_project.project_name}}</td>
+                                                <td>{{front_project.front_type.project_type}}</td>
+                                                <td>{{front_project.front_host.project_host}}</td>
+						<td>{{front_project.creater}}</td>
+                                                <td>{{front_project.create_time | date:"Y-m-d H:i:s"}}</td>
+                                                <td><a href="{% url 'task:modify_project' front_project.id %}" class="btn btn-success btn-sm">修改</a><a onclick='delete_project({{front_project.id}})' class="btn btn-danger btn-sm cancel">删除</a></td>
+                                            </tr>
+					 {% endfor %}
+                                        </tbody>
+                                    </table>
+				    <div class="pageturn">
+                        	      <ul class="pagelist">
+                                        {% if all_front_project.has_previous %}
+                                          <li class="long"><a href="?{{ all_front_project.previous_page_number.querystring }}">上一页</a></li>
+                            		{% endif %}
+                                        {% for page in all_front_project.pages %}
+                                          {% if page %}
+                                            {% ifequal page all_front_project.number %}
+                                              <li class="active"><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                                            {% else %}
+                                              <li><a href="?{{ page.querystring }}">{{ page }}</a></li>
+                                            {% endifequal %}
+                                          {% else %}
+                                            <li class="none"><a href="">...</a></li>
+                                          {% endif %}
+                                        {% endfor %}
+                                        {% if all_front_project.has_next %}
+                                	  <li class="long"><a href="?{{ all_front_project.next_page_number.querystring }}">下一页</a></li>
+                            		{% endif %}
+                                      </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /. ROW  -->
+            </div>
+            <!-- /. PAGE INNER  -->
+        </div>
+        <!-- /. PAGE WRAPPER  -->
+{% endblock %}
+{% block bottom_js %}
+	<script>
+		function check_input2(obj){
+                        var ret=true;
+                        var text=$(obj).parent().find('input').eq(1).val();
+                        if(text.length == ''){
+                                alert('亲，搜索不能为空哦！');
+                                ret=false;
+                        }
+                        return ret;
+                }
+		function check_select(obj){
+                        var ret=true;
+                        var text=$(obj).parent().parent().find('select').eq(0).text();
+                        if($.trim(text).length == ''){
+                                alert('亲，要删除的项目类型不能为空哦！');
+                                ret=false;
+                        }
+                        return ret;
+                }
+		function delete_project(id){
+                	$.ajax({
+                        	type:'post',
+                        	data:{id:id,'csrfmiddlewaretoken':'{{ csrf_token }}'},
+                        	url:'{% url 'task:front_list' %}',
+                        	success:function(data){
+                                        if(data == 'ok'){
+                                                alert('删除成功');
+                                                window.location.href=window.location.href;
+                                        } else {
+                                                alert('删除失败');
+                                        }
+                                }
+                	})
+            	}
+		if('{{message}}'){
+                	alert('{{message}}');
+        	}
+                var url=window.location.href;
+                if (url.indexOf('?message')>0){
+			len=url.length;
+                        position=url.indexOf('?message');
+                        data=url.substring(position+9,len+1);
+                        alert(decodeURIComponent(data));
+                        url=url.substring(0,position);
+                        window.location.href=url;
+                }
+		function check_input(obj){
+			var ret=true;
+			var text=$(obj).parent().parent().find('input').eq(1).val();
+			if(text.length == ''){
+				alert('亲，标红色星号的内容不能为空哦！');
+				ret=false;
+			}
+			return ret;
+		}
+		function check_input3(obj){
+                        var ret=true;
+                        var text=$(obj).parent().parent().find('input').eq(1).val();
+			var project_type=$(obj).parent().parent().find('select').eq(0).text();
+			var project_host=$(obj).parent().parent().find('select').eq(1).text();
+                        if($.trim(text) == ''){
+                                alert('亲，标红色星号的内容不能为空哦！');
+                                ret=false;
+                        } else if ($.trim(project_type) == ''){
+				alert('亲，请先去添加项目类型！');
+				ret=false;
+				
+			} else if ($.trim(project_host) == ''){
+				alert('亲，请先去添加项目主机！');
+				ret=false;
+			}
+                        return ret;
+                }
+	</script>
+{% endblock %}
+

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div id="page-wrapper" xmlns="http://www.w3.org/1999/html">
+        <div id="page-inner">
+	  <div class="row">
+          	<div class="col-md-12">
+                	<h4 class="page-header">
+                           <a href="{% url 'index' %}"><i class="fa fa-home"></i> 首页</a> > 用户管理 > <a href="{% url 'users:grouplist' %}">用户组管理</a> > 用户组权限
+                        </h4>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 col-xs-12">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">用户组权限</div>
+                        <div class="panel-body">
+                            <dl class="dl-horizontal">
+                                <form action="{% url 'users:grouppermissionlist' %}" method="post" role="form" class="for-horizontal">{% csrf_token %}
+                                    {% for ct in content_type %}
+                                        <dt class="permission-content">{{ ct.app_label }}--{{ ct.model }}：</dt>
+                                        <dd class="permission-point">
+                                            <ul class="list-unstyled">
+                                                {% for p in ct.permission_set.all %}
+                                                    <li>
+                                                        <input type="checkbox" name="permission" value="{{ p.id }}"
+                                                               {% if p.id in group_permissions %}checked{% endif %}>
+                                                        <label>{{ p.name }}</label>
+                                                    </li>
+                                                {% endfor %}
+                                            </ul>
+                                        </dd>
+                                    {% endfor %}
+                                    <div class="form-group form-footer">
+                                        <div class="col-sm-offset-3 col-sm-8">
+                                            <input type="hidden" name="group" value="{{ group }}">
+                                            <input type="submit" class="btn btn-primary" value="修改">
+                                            <input type="submit" class="btn btn-warning" value="重置">
+                                        </div>
+                                    </div>
+                                </form>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
