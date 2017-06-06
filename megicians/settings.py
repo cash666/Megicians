@@ -163,7 +163,7 @@ CELERY_TIMEZONE = 'Asia/Shanghai'
 #email配置
 EMAIL_HOST='smtp.exmail.qq.com'
 EMAIL_PORT=25
-EMAIL_HOST_USER='omcheck@lifang.com'
-EMAIL_HOST_PASSWORD='AJAXuwts@__99261'
+EMAIL_HOST_USER='xxxxx'
+EMAIL_HOST_PASSWORD='xxxx'
 EMAIL_USE_TLS=False
-EMAIL_FROM='omcheck@lifang.com'
+EMAIL_FROM='xxxxx'
